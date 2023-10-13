@@ -34,6 +34,7 @@ class Anvil {
                 e.isCancelled = true
                 synthesis(player, player.openInventory.topInventory)
             }
+            else -> return
         }
     }
     fun close(gui: InventoryView, player: Player) {
@@ -44,25 +45,19 @@ class Anvil {
             player.inventory.addItem(gui.getItem(4))
         }
     }
-    private fun overEnchant(item: ItemStack): Boolean {
-        var allLevel = 0
-        for ((enchant, level) in item.itemMeta?.enchants ?: return false) {
-            allLevel += level
-        }
-        return allLevel > 10
-    }
     private fun synthesis(player: Player, gui: Inventory) {
         val syntheticItems1 = gui.getItem(2) ?: return
         val syntheticItems2 = gui.getItem(4) ?: return
+        if (!enchantItemCheck(syntheticItems1.type) || !enchantItemCheck(syntheticItems2.type)) {
+            return
+        }
         if (syntheticItems2.itemMeta?.displayName != "" && syntheticItems2.itemMeta?.displayName != "${ChatColor.YELLOW}修理キット") {
             Player().errorMessage(player, "右側に名前付きのアイテムを設置することはできません")
             return
         }
+
         var completedItem = syntheticItems1.clone()
         if (syntheticItems1.type == syntheticItems2.type) {
-            if (!enchantItemCheck(syntheticItems1.type)) {
-                return
-            }
             completedItem = enchant(syntheticItems2, completedItem)
             completedItem = durability(syntheticItems2, completedItem)
         } else if (syntheticItems2.type == Material.ENCHANTED_BOOK) {
@@ -79,6 +74,14 @@ class Anvil {
             return
         }
         complete(player, completedItem, gui)
+    }
+    private fun overEnchant(item: ItemStack): Boolean {
+        var allLevel = 0
+        for ((enchant, level) in item.itemMeta?.enchants ?: return false) {
+            allLevel += level
+            if (allLevel > 10) { return true }
+        }
+        return false
     }
     private fun complete(player: Player, completedItem: ItemStack, gui: Inventory) {
         player.playSound(player, Sound.BLOCK_ANVIL_USE, 1f, 1f)
