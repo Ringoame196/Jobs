@@ -48,12 +48,21 @@ class Anvil {
     private fun synthesis(player: Player, gui: Inventory) {
         val syntheticItems1 = gui.getItem(2) ?: return
         val syntheticItems2 = gui.getItem(4) ?: return
-        if (!enchantItemCheck(syntheticItems1.type) || !enchantItemCheck(syntheticItems2.type)) {
+        if (!enchantItemCheck(syntheticItems1.type) || (!enchantItemCheck(syntheticItems2.type) && syntheticItems2.itemMeta?.displayName != "${ChatColor.YELLOW}修理キット")) {
             return
         }
         if (syntheticItems2.itemMeta?.displayName != "" && syntheticItems2.itemMeta?.displayName != "${ChatColor.YELLOW}修理キット") {
             Player().errorMessage(player, "右側に名前付きのアイテムを設置することはできません")
             return
+        }
+        if ((syntheticItems2.itemMeta?.lore?.size ?: 0) >= 1) {
+            for (lore in syntheticItems2.itemMeta!!.lore!!) {
+                if (!lore.contains("所有者:")) {
+                    continue
+                }
+                Player().errorMessage(player, "保護のアイテムを設置することはできません")
+                return
+            }
         }
 
         var completedItem = syntheticItems1.clone()
@@ -63,10 +72,6 @@ class Anvil {
         } else if (syntheticItems2.type == Material.ENCHANTED_BOOK) {
             completedItem = enchantBook(completedItem, syntheticItems2.itemMeta as EnchantmentStorageMeta)
         } else if (syntheticItems2.itemMeta!!.displayName == "${ChatColor.YELLOW}修理キット") {
-            if (syntheticItems2.durability.toInt() > syntheticItems2.amount) {
-                Player().errorMessage(player, "修理キットが多すぎます")
-                return
-            }
             completedItem.durability = (completedItem.durability - syntheticItems2.amount).toShort()
         }
         if (overEnchant(completedItem)) {
@@ -91,13 +96,26 @@ class Anvil {
     }
     private fun enchant(beforeItem: ItemStack, afterItem: ItemStack): ItemStack {
         for ((enchant, level) in beforeItem.itemMeta?.enchants ?: return afterItem) {
+            if (afterItem.getEnchantmentLevel(enchant) == level) {
+                afterItem.addUnsafeEnchantment(enchant, level + 1)
+                continue
+            }
             afterItem.addUnsafeEnchantment(enchant, level)
         }
         return afterItem
     }
     private fun enchantBook(afterItem: ItemStack, meta: EnchantmentStorageMeta): ItemStack {
-        for ((enchantment, level) in meta.storedEnchants) {
-            afterItem.addUnsafeEnchantment(enchantment, level)
+        for ((enchant, level) in meta.storedEnchants) {
+            if (afterItem.getEnchantmentLevel(enchant) > level) { continue }
+            if (afterItem.getEnchantmentLevel(enchant) == level) {
+                if (level >= 5) {
+                    afterItem.addUnsafeEnchantment(enchant, level)
+                } else {
+                    afterItem.addUnsafeEnchantment(enchant, level + 1)
+                }
+                continue
+            }
+            afterItem.addUnsafeEnchantment(enchant, level)
         }
         return afterItem
     }
