@@ -43,7 +43,7 @@ class Cook {
                     }
                 } else if (c == 20 || item.type == Material.AIR) {
                     if (item.type != Material.AIR) {
-                        entity.setItem(Item().make(Material.CHARCOAL, "${ChatColor.BLACK}炭", null, null))
+                        entity.setItem(ItemStack(Material.AIR))
                         world.playSound(entity.location, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f)
                     }
                     armorStand.remove()
@@ -55,22 +55,52 @@ class Cook {
     fun cut(item: ItemStack, player: Player, entity: ItemFrame) {
         val playerItem = player.inventory.itemInMainHand
         if (playerItem.itemMeta?.customModelData != 1) { return }
+        playerItem.durability = (playerItem.durability + 4).toShort()
+        player.inventory.setItemInMainHand(playerItem)
         if (!knife(player)) {
             player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f)
+            if (playerItem.durability >= playerItem.type.maxDurability) {
+                player.inventory.setItemInMainHand(ItemStack(Material.AIR))
+                player.playSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1f)
+            }
             return
         }
         player.inventory.addItem(CookingData().cut(item) ?: return)
         entity.setItem(ItemStack(Material.AIR))
         player.world.playSound(player.location, Sound.ENTITY_SHEEP_SHEAR, 1f, 1f)
+        if (playerItem.durability >= playerItem.type.maxDurability) {
+            player.inventory.setItemInMainHand(ItemStack(Material.AIR))
+            player.playSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1f)
+        }
     }
     private fun knife(player: Player): Boolean {
         val knife = player.inventory.itemInMainHand
-        val count = when (knife.type) {
-            Material.STONE_SWORD -> 5
-            Material.IRON_SWORD -> 3
-            Material.DIAMOND_SWORD -> 1
-            else -> return false
+        val sharpness = knife.itemMeta?.lore?.get(0).toString().replace("切れ味:", "").toInt()
+        if (sharpness > 10) {
+            val chance = Random.nextInt(11, 25)
+            if (chance <= sharpness) {
+                chance(player)
+            }
+            return true
         }
-        return Random.nextInt(0, count) == 0
+        return Random.nextInt(0, (10 - sharpness)) <= 0
+    }
+    private fun chance(player: Player) {
+        val item = player.inventory.itemInMainHand
+        item.durability = (item.durability - 1).toShort()
+        player.inventory.setItemInMainHand(item)
+    }
+    fun knifeSharpness(item: ItemStack): ItemStack {
+        val max = when (item.type) {
+            Material.STONE_SWORD -> 8
+            Material.IRON_SWORD -> 13
+            Material.DIAMOND_SWORD -> 20
+            else -> 0
+        }
+        val sharpness = Random.nextInt(0, max)
+        val meta = item.itemMeta
+        meta?.lore = mutableListOf("切れ味:$sharpness")
+        item.setItemMeta(meta)
+        return item
     }
 }

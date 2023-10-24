@@ -2,11 +2,13 @@ package com.github.Ringoame196
 
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import kotlin.random.Random
 
 class Job {
     val job = mutableListOf("無職", "${ChatColor.YELLOW}料理人", "${ChatColor.GOLD}ハンター", "${ChatColor.GRAY}鍛冶屋")
@@ -74,8 +76,21 @@ class Job {
             Material.DIAMOND_HELMET,
             Material.DIAMOND_CHESTPLATE,
             Material.DIAMOND_LEGGINGS,
-            Material.DIAMOND_BOOTS
+            Material.DIAMOND_BOOTS,
+            Material.SHIELD
         )
         return list
+    }
+    fun giveVegetables(location: Location) {
+        val vegetables = mutableListOf(
+            Item().make(Material.POTATO, "${ChatColor.GREEN}キューリ", null, 5),
+            Item().make(Material.WHEAT, "${ChatColor.GOLD}キャベツ", null, 1),
+            Item().make(Material.SWEET_BERRIES, "${ChatColor.GOLD}スパイス", null, 1),
+            Item().make(Material.WHEAT, "稲", null, 3),
+            Item().make(Material.POTATO, "${ChatColor.DARK_PURPLE}なす", null, 7),
+            Item().make(Material.POTATO, "${ChatColor.GOLD}たまねぎ", null, 2),
+            Item().make(Material.POTATO, "${ChatColor.RED}トマト", null, 4)
+        )
+        location.world?.dropItem(location, vegetables[Random.nextInt(0, vegetables.size - 1)])
     }
 }
