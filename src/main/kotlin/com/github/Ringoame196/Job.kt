@@ -6,6 +6,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
@@ -83,7 +84,7 @@ class Job {
     }
     fun giveVegetables(location: Location) {
         val vegetables = mutableListOf(
-            Item().make(Material.POTATO, "${ChatColor.GREEN}キューリ", null, 5),
+            Item().make(Material.POTATO, "${ChatColor.GREEN}キュウリ", null, 5),
             Item().make(Material.WHEAT, "${ChatColor.GOLD}キャベツ", null, 1),
             Item().make(Material.SWEET_BERRIES, "${ChatColor.GOLD}スパイス", null, 1),
             Item().make(Material.WHEAT, "稲", null, 3),
@@ -91,6 +92,30 @@ class Job {
             Item().make(Material.POTATO, "${ChatColor.GOLD}たまねぎ", null, 2),
             Item().make(Material.POTATO, "${ChatColor.RED}トマト", null, 4)
         )
-        location.world?.dropItem(location, vegetables[Random.nextInt(0, vegetables.size - 1)])
+        location.world?.dropItem(location, vegetables[Random.nextInt(0, vegetables.size)])
+    }
+    fun givefish(player: Player): ItemStack {
+        val fish = mutableListOf(
+            Item().make(Material.COD, "${ChatColor.RED}マグロ", null, 5),
+            Item().make(Material.COD, "${ChatColor.GOLD}サーモン", null, 6),
+            Item().make(Material.COD, "${ChatColor.RED}マグロ", null, 5),
+            Item().make(Material.EXPERIENCE_BOTTLE, "${ChatColor.GREEN}経験値瓶", "", null),
+            Item().enchant(Enchantment.LURE, 1)
+        )
+        if (Job().get(player) == "${ChatColor.GOLD}ハンター") {
+            fish.add(Item().make(Material.COD, "${ChatColor.RED}タコ", null, 12))
+            fish.add(Item().make(Material.COD, "イカ", null, 9))
+            fish.add(Item().make(Material.COD, "${ChatColor.AQUA}エビ", null, 2))
+        }
+        if (Job().get(player) == "${ChatColor.GOLD}ハンター" || Random.nextInt(0, 10) == 0) {
+            return fish.get(Random.nextInt(0, fish.size))
+        }
+        val rubbish = mutableListOf(
+            ItemStack(Material.STRING),
+            ItemStack(Material.FEATHER),
+            ItemStack(Material.LILY_PAD),
+            ItemStack(Material.BONE)
+        )
+        return rubbish[Random.nextInt(0, rubbish.size)]
     }
 }
