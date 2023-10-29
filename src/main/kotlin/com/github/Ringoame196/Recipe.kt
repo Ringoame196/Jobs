@@ -26,6 +26,10 @@ class Recipe {
         knife(Material.DIAMOND_SWORD, Material.DIAMOND_BLOCK, "${ChatColor.AQUA}ダイヤモンド", "diamondKnife", plugin)
         remove("handle", plugin)
         handle(plugin)
+        remove("breadMold", plugin)
+        breadMold(plugin)
+        remove("bunMold", plugin)
+        bunMold(plugin)
     }
     fun repairKit() {
         val customItem = Item().make(Material.FLINT, "${ChatColor.YELLOW}修理キット", null, 1)
@@ -49,9 +53,19 @@ class Recipe {
         Bukkit.addRecipe(customRecipe)
     }
     fun bunMold(plugin: Plugin) {
-        val customResultItem = Item().make(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, "まな板", null, null)
+        val customResultItem = Item().make(Material.PAPER, "食パンの型", null, 5)
         val customRecipe = ShapedRecipe(NamespacedKey(plugin, "bunMold"), customResultItem)
-        customRecipe.shape("AAA", "CIC", "CCC")
+        customRecipe.shape("AAC", "AIC", "CCC")
+        customRecipe.setIngredient('I', Material.IRON_INGOT)
+        customRecipe.setIngredient('C', Material.COPPER_INGOT)
+
+        // レシピをサーバーに登録
+        Bukkit.addRecipe(customRecipe)
+    }
+    fun breadMold(plugin: Plugin) {
+        val customResultItem = Item().make(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, "まな板", null, null)
+        val customRecipe = ShapedRecipe(NamespacedKey(plugin, "breadMold"), customResultItem)
+        customRecipe.shape("AAC", "AIC", "CCC")
         customRecipe.setIngredient('I', Material.IRON_INGOT)
         customRecipe.setIngredient('C', Material.COPPER_INGOT)
 

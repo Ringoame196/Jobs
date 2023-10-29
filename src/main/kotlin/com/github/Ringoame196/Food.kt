@@ -33,7 +33,7 @@ class Food {
     }
     private fun giveExpirationDate(): String {
         val now = Calendar.getInstance()
-        now.add(Calendar.WEEK_OF_YEAR, 1) // 1週間後の日時を取得
+        now.add(Calendar.WEEK_OF_YEAR, 2) // 3週間後の日時を取得
 
         val year = now.get(Calendar.YEAR)
         val month = now.get(Calendar.MONTH) + 1 // 月は0から始まるため+1
