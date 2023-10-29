@@ -12,11 +12,20 @@ import org.bukkit.plugin.Plugin
 class Recipe {
     fun add(plugin: Plugin) {
         repairKit()
+        remove("cuttingBoard", plugin)
         cuttingBoard(plugin)
+        remove("bunMold", plugin)
         bunMold(plugin)
+        remove("mixStick", plugin)
+        mixStick(plugin)
+        remove("stoneKnife", plugin)
         knife(Material.STONE_SWORD, Material.STONE, "${ChatColor.GOLD}石", "stoneKnife", plugin)
-        knife(Material.IRON_SWORD, Material.IRON_BLOCK, "鉄", "ironKnife", plugin)
+        remove("stoneKnife", plugin)
+        knife(Material.IRON_SWORD, Material.IRON_BLOCK, "鉄", "stoneKnife", plugin)
+        remove("diamondKnife", plugin)
         knife(Material.DIAMOND_SWORD, Material.DIAMOND_BLOCK, "${ChatColor.AQUA}ダイヤモンド", "diamondKnife", plugin)
+        remove("handle", plugin)
+        handle(plugin)
     }
     fun repairKit() {
         val customItem = Item().make(Material.FLINT, "${ChatColor.YELLOW}修理キット", null, 1)
@@ -49,6 +58,26 @@ class Recipe {
         // レシピをサーバーに登録
         Bukkit.addRecipe(customRecipe)
     }
+    fun mixStick(plugin: Plugin) {
+        val customResultItem = Item().make(Material.STICK, "${ChatColor.YELLOW}おたま", null, 1)
+        val customRecipe = ShapedRecipe(NamespacedKey(plugin, "mixStick"), customResultItem)
+        customRecipe.shape("SSS", "SWS", "SSS")
+        customRecipe.setIngredient('S', Material.COBBLESTONE)
+        customRecipe.setIngredient('W', Material.WOODEN_SHOVEL)
+
+        // レシピをサーバーに登録
+        Bukkit.addRecipe(customRecipe)
+    }
+    fun handle(plugin: Plugin) {
+        val customResultItem = Item().make(Material.STICK, "${ChatColor.YELLOW}混ぜハンドル", null, 2)
+        val customRecipe = ShapedRecipe(NamespacedKey(plugin, "handle"), customResultItem)
+        customRecipe.shape("ASA", "SIS", "ASA")
+        customRecipe.setIngredient('S', Material.COBBLESTONE)
+        customRecipe.setIngredient('I', Material.IRON_INGOT)
+
+        // レシピをサーバーに登録
+        Bukkit.addRecipe(customRecipe)
+    }
     private fun knife(sword: Material, block: Material, kinds: String, id: String, plugin: Plugin) {
         val item = ItemStack(sword)
         val meta = item.itemMeta
@@ -62,5 +91,11 @@ class Recipe {
         customRecipe.setIngredient('S', sword)
 
         Bukkit.addRecipe(customRecipe)
+    }
+    private fun remove(key: String, plugin: Plugin) {
+        val recipeKey = NamespacedKey(plugin, key)
+        if (Bukkit.getRecipe(recipeKey) != null) {
+            Bukkit.removeRecipe(recipeKey)
+        }
     }
 }

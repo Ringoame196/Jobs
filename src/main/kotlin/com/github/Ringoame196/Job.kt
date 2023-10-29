@@ -17,9 +17,19 @@ class Job {
         return job[Scoreboard().getValue("job", player.uniqueId.toString())]
     }
     fun prefix(player: Player) {
-        val displayName = "[${get(player)}${ChatColor.WHITE}]${player.name}" + if (player.isOp) { "${ChatColor.AQUA}@運営" } else { "" }
-        player.setDisplayName(displayName)
-        player.setPlayerListName(displayName)
+        val displayName = when (get(player)) {
+            "${ChatColor.YELLOW}料理人" -> "${ChatColor.DARK_PURPLE}"
+            "${ChatColor.GOLD}ハンター" -> "${ChatColor.DARK_RED}"
+            "${ChatColor.GRAY}鍛冶屋" -> "${ChatColor.GRAY}"
+            else -> ""
+        } + player.name
+        val prefix = if (player.isOp) {
+            "${ChatColor.YELLOW}[運営]"
+        } else {
+            ""
+        }
+        player.setDisplayName("${prefix}$displayName@${get(player)}")
+        player.setPlayerListName("${prefix}$displayName")
     }
     fun change(player: Player, jobName: String) {
         val item = player.inventory.itemInMainHand
@@ -84,28 +94,27 @@ class Job {
     }
     fun giveVegetables(location: Location) {
         val vegetables = mutableListOf(
-            Item().make(Material.POTATO, "${ChatColor.GREEN}キュウリ", null, 5),
-            Item().make(Material.WHEAT, "${ChatColor.GOLD}キャベツ", null, 1),
-            Item().make(Material.SWEET_BERRIES, "${ChatColor.GOLD}スパイス", null, 1),
-            Item().make(Material.WHEAT, "稲", null, 3),
-            Item().make(Material.POTATO, "${ChatColor.DARK_PURPLE}なす", null, 7),
-            Item().make(Material.POTATO, "${ChatColor.GOLD}たまねぎ", null, 2),
-            Item().make(Material.POTATO, "${ChatColor.RED}トマト", null, 4)
+            Food().item("${ChatColor.GREEN}キュウリ", 1),
+            Food().item("${ChatColor.GOLD}キャベツ", 2),
+            Food().item("${ChatColor.GOLD}スパイス", 3),
+            Food().item("稲", 4),
+            Food().item("${ChatColor.DARK_PURPLE}なす", 5),
+            Food().item("${ChatColor.GOLD}たまねぎ", 6),
+            Food().item("${ChatColor.RED}トマト", 7),
         )
         location.world?.dropItem(location, vegetables[Random.nextInt(0, vegetables.size)])
     }
     fun givefish(player: Player): ItemStack {
         val fish = mutableListOf(
-            Item().make(Material.COD, "${ChatColor.RED}マグロ", null, 5),
-            Item().make(Material.COD, "${ChatColor.GOLD}サーモン", null, 6),
-            Item().make(Material.COD, "${ChatColor.RED}マグロ", null, 5),
+            Food().item("${ChatColor.RED}マグロ", 31),
+            Food().item("${ChatColor.GOLD}サーモン", 32),
             Item().make(Material.EXPERIENCE_BOTTLE, "${ChatColor.GREEN}経験値瓶", "", null),
             Item().enchant(Enchantment.LURE, 1)
         )
         if (Job().get(player) == "${ChatColor.GOLD}ハンター") {
-            fish.add(Item().make(Material.COD, "${ChatColor.RED}タコ", null, 12))
-            fish.add(Item().make(Material.COD, "イカ", null, 9))
-            fish.add(Item().make(Material.COD, "${ChatColor.AQUA}エビ", null, 2))
+            fish.add(Food().item("${ChatColor.RED}タコ", 38))
+            fish.add(Food().item("イカ", 35))
+            fish.add(Food().item("${ChatColor.AQUA}エビ", 28))
         }
         if (Job().get(player) == "${ChatColor.GOLD}ハンター" || Random.nextInt(0, 10) == 0) {
             return fish.get(Random.nextInt(0, fish.size))
