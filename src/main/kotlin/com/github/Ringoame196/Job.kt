@@ -118,6 +118,8 @@ class Job {
             fish.add(Food().item("${ChatColor.RED}タコ", 38))
             fish.add(Food().item("イカ", 35))
             fish.add(Food().item("${ChatColor.AQUA}エビ", 28))
+            fish.add(ItemStack(Material.LEATHER))
+            fish.add(Food().item("${ChatColor.BLACK}海苔", 37))
         }
         if (Job().get(player) == "${ChatColor.GOLD}ハンター" || Random.nextInt(0, 10) == 0) {
             return fish.get(Random.nextInt(0, fish.size))
@@ -126,7 +128,8 @@ class Job {
             ItemStack(Material.STRING),
             ItemStack(Material.FEATHER),
             ItemStack(Material.LILY_PAD),
-            ItemStack(Material.BONE)
+            ItemStack(Material.BONE),
+            ItemStack(Material.LEATHER)
         )
         return rubbish[Random.nextInt(0, rubbish.size)]
     }
@@ -175,6 +178,7 @@ class Job {
             Item().enchant(Enchantment.MULTISHOT, 1),
             Item().enchant(Enchantment.SWIFT_SNEAK, 1),
         )
+        player.foodLevel -= 10
         val max = enchantBook.size - 1
         var c = Random.nextInt(10, 20)
         object : BukkitRunnable() {
@@ -185,6 +189,7 @@ class Job {
                 if (c == 0) {
                     player.inventory.addItem(gui.getItem(4))
                     player.playSound(player, Sound.BLOCK_ANVIL_USE, 1f, 1f)
+                    player.closeInventory()
                     this.cancel()
                 }
             }

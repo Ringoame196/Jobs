@@ -31,7 +31,7 @@ class Food {
         item.setItemMeta(meta)
         return item
     }
-    private fun giveExpirationDate(): String {
+    fun giveExpirationDate(): String {
         val now = Calendar.getInstance()
         now.add(Calendar.WEEK_OF_YEAR, 2) // 3週間後の日時を取得
 
@@ -41,10 +41,10 @@ class Food {
         return "消費期限: $year/$month/$day"
     }
     fun isExpirationDate(player: Player, item: ItemStack): Boolean {
-        val expiration = item.itemMeta?.lore?.get(0)
-        val dateStr = expiration?.replace("消費期限:", "")
+        val expiration = item.itemMeta?.lore?.get(0) ?: return false
+        val dateStr = expiration.replace("消費期限:", "")
         val dateFormat = SimpleDateFormat("yyyy/MM/dd") // フォーマットに合わせて変更
-        val date = dateFormat.parse(dateStr)
+        val date = dateFormat.parse(dateStr) ?: return false
 
         // 現在の日付を取得
         val currentDate = Date()
