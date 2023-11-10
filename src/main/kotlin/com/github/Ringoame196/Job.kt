@@ -38,7 +38,7 @@ class Job {
         val item = player.inventory.itemInMainHand
         item.amount = item.amount - 1
         for (i in 0 until job.size) {
-            if (job.get(i) != jobName) { continue }
+            if (job[i] != jobName) { continue }
             Scoreboard().remove("job", get(player), 1)
             Scoreboard().set("job", player.uniqueId.toString(), i)
             Scoreboard().add("job", get(player), 1)
@@ -48,7 +48,23 @@ class Job {
             player.world.spawnParticle(Particle.EXPLOSION_HUGE, player.location, 1)
             player.inventory.setItemInMainHand(item)
             player.closeInventory()
+            giveMoney(player)
         }
+    }
+    private fun giveMoney(player: Player) {
+        val list = mutableListOf(
+            Scoreboard().getValue("job", "${ChatColor.YELLOW}料理人"),
+            Scoreboard().getValue("job", "${ChatColor.GOLD}ハンター"),
+            Scoreboard().getValue("job", "${ChatColor.GRAY}鍛冶屋"),
+        )
+        val rankList = list.sortedByDescending { it }
+        val giveMoney = when (rankList.indexOf(Scoreboard().getValue("job", Job().get(player)))) {
+            0 -> 1000
+            1 -> 5000
+            2 -> 10000
+            else -> 0
+        }
+        Economy().add(player, giveMoney, true)
     }
     fun selectGUI(player: Player) {
         val gui = Bukkit.createInventory(null, 9, "${ChatColor.BLUE}職業選択")
@@ -62,7 +78,7 @@ class Job {
         return Item().make(material, jobName, employmentRate, null)
     }
     fun tool(): List<Material> {
-        val list = mutableListOf<Material>(
+        return mutableListOf(
             Material.IRON_SWORD,
             Material.GOLDEN_SWORD,
             Material.DIAMOND_SWORD,
@@ -93,7 +109,6 @@ class Job {
             Material.DIAMOND_BOOTS,
             Material.SHIELD
         )
-        return list
     }
     fun giveVegetables(location: Location) {
         val vegetables = mutableListOf(

@@ -1,5 +1,6 @@
 package com.github.Ringoame196
 
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -9,7 +10,8 @@ import java.util.Date
 
 class Food {
     fun recovery(player: Player, item: ItemStack) {
-        val addfood = when (item.itemMeta?.displayName) {
+        val itemName = item.itemMeta?.displayName
+        val addfood = when (itemName) {
             "おにぎり" -> 6
             "ステーキ" -> 5
             "からあげ" -> 2
@@ -17,10 +19,11 @@ class Food {
             "ハンバーグ" -> 4
             else -> 2
         }
-        player.foodLevel += (addfood - 1)
-        if (player.foodLevel > 20) {
-            player.foodLevel = 20
+        when (itemName) {
+            "${ChatColor.YELLOW}力のプロテイン" -> Status().addPower(player)
+            "${ChatColor.RED}ハートのハーブ" -> Status().addHP(player)
         }
+        player.foodLevel += addfood
     }
     fun item(name: String, customModelData: Int): ItemStack {
         val item = ItemStack(Material.MELON_SLICE)
