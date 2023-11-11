@@ -141,12 +141,15 @@ class Cook {
     fun mix(player: Player, barrel: Barrel) {
         if (Random.nextInt(0, 8) != 0) { return }
         val recipe = mutableListOf<String>()
+        var expiration = false
         for (i in 0 until barrel.inventory.size) {
             val item = barrel.inventory.getItem(i) ?: continue
             recipe.add(item.itemMeta?.displayName ?: continue)
-            if (Food().isExpirationDate(player, item)) { return }
+            if (Food().isExpirationDate(player, item)) {
+                expiration = true
+            }
         }
-        val food = CookingData().mix(recipe) ?: return
+        val food = if (expiration) { CookingData().fermentationMix(recipe) } else { CookingData().mix(recipe) } ?: return
         barrel.world.dropItem(barrel.location.clone().add(0.5, 1.5, 0.5), food)
         for (i in 0 until barrel.inventory.size) {
             val item = barrel.inventory.getItem(i) ?: continue

@@ -30,13 +30,13 @@ class Food {
         val meta = item.itemMeta
         meta?.setDisplayName(name)
         meta?.setCustomModelData(customModelData)
-        meta?.lore = mutableListOf(giveExpirationDate())
+        meta?.lore = mutableListOf(giveExpirationDate(14))
         item.setItemMeta(meta)
         return item
     }
-    fun giveExpirationDate(): String {
+    fun giveExpirationDate(add: Int): String {
         val now = Calendar.getInstance()
-        now.add(Calendar.WEEK_OF_YEAR, 2) // 3週間後の日時を取得
+        now.add(Calendar.DAY_OF_WEEK, add)
 
         val year = now.get(Calendar.YEAR)
         val month = now.get(Calendar.MONTH) + 1 // 月は0から始まるため+1

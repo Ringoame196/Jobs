@@ -30,6 +30,8 @@ class Recipe {
         breadMold(plugin)
         remove("bunMold", plugin)
         bunMold(plugin)
+        remove("bambooSkewer", plugin)
+        bambooSkewer(plugin)
     }
     fun repairKit() {
         val customItem = Item().make(Material.FLINT, "${ChatColor.YELLOW}修理キット", null, 1)
@@ -88,6 +90,16 @@ class Recipe {
         customRecipe.shape("ASA", "SIS", "ASA")
         customRecipe.setIngredient('S', Material.COBBLESTONE)
         customRecipe.setIngredient('I', Material.IRON_INGOT)
+
+        // レシピをサーバーに登録
+        Bukkit.addRecipe(customRecipe)
+    }
+    fun bambooSkewer(plugin: Plugin) {
+        val customResultItem = Item().make(Material.STICK, "${ChatColor.GOLD}竹串", null, 3)
+        val customRecipe = ShapedRecipe(NamespacedKey(plugin, "bambooSkewer"), customResultItem)
+        customRecipe.shape("AOA", "OSO", "AOA")
+        customRecipe.setIngredient('O', Material.OAK_PLANKS)
+        customRecipe.setIngredient('S', Material.STICK)
 
         // レシピをサーバーに登録
         Bukkit.addRecipe(customRecipe)
