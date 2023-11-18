@@ -33,6 +33,9 @@ class Job {
         }
         player.setDisplayName("${prefix}$displayName@${get(player)}")
         player.setPlayerListName("${prefix}$displayName")
+        if (get(player) == "${ChatColor.YELLOW}料理人") {
+            titleStar(player)
+        }
     }
     fun change(player: Player, jobName: String) {
         val item = player.inventory.itemInMainHand
@@ -64,7 +67,7 @@ class Job {
             2 -> 10000
             else -> 0
         }
-        Economy().add(player, giveMoney, true)
+        Economy().add(player.name, giveMoney, true)
     }
     fun selectGUI(player: Player) {
         val gui = Bukkit.createInventory(null, 9, "${ChatColor.BLUE}職業選択")
@@ -209,5 +212,15 @@ class Job {
                 }
             }
         }.runTaskTimer(plugin, 0L, 5L) // 1秒間隔 (20 ticks) でタスクを実行
+    }
+    fun titleStar(player: Player) {
+        player.setPlayerListName(
+            player.playerListName + when (Database().getInt(player.uniqueId.toString(), "aoringoserver", "cooklevel", "level")) {
+                1 -> "${ChatColor.YELLOW}★"
+                2 -> "${ChatColor.YELLOW}★★"
+                3 -> "${ChatColor.YELLOW}★★★"
+                else -> ""
+            }
+        )
     }
 }

@@ -1,9 +1,13 @@
 package com.github.Ringoame196
 
 import org.bukkit.ChatColor
+import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -59,5 +63,36 @@ class Food {
             return true
         }
         return false
+    }
+    fun lowered(player: Player, item: ItemStack) {
+        Player().errorMessage(player, "お腹を下した")
+        val poisonEffect = PotionEffect(PotionEffectType.POISON, 5 * 20, 100) // 持続時間をticksに変換
+        player.addPotionEffect(poisonEffect)
+        val hungerEffect = PotionEffect(PotionEffectType.HUNGER, 5 * 20, 100) // 持続時間をticksに変換
+        player.addPotionEffect(hungerEffect)
+    }
+    fun eat(player: Player, item: ItemStack) {
+        val itemType = item.type
+        if (itemType == Material.MILK_BUCKET && item.itemMeta?.displayName != null) {
+            Food().recovery(player, item)
+        } else {
+            player.foodLevel = player.foodLevel + 2
+        }
+        player.saturation = 20.0F
+        if (player.foodLevel > 20) {
+            player.foodLevel = 20
+        }
+        if (player.gameMode == GameMode.CREATIVE) { return }
+        val food = item.clone()
+        food.amount = 1
+        player.inventory.removeItem(food)
+    }
+    fun dropReplacement(e: EntityDeathEvent, beforeItem: Material, afterItem: ItemStack) {
+        for (item in e.drops) {
+            if (item.type != beforeItem) { continue }
+            e.drops.remove(item)
+            afterItem.amount = item.amount
+            e.drops.add(afterItem)
+        }
     }
 }
