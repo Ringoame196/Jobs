@@ -24,8 +24,8 @@ class Food {
             else -> 2
         }
         when (itemName) {
-            "${ChatColor.YELLOW}力のプロテイン" -> Status().addPower(player)
-            "${ChatColor.RED}ハートのハーブ" -> Status().addHP(player)
+            "${ChatColor.YELLOW}力のプロテイン" -> Player().addPower(player)
+            "${ChatColor.RED}ハートのハーブ" -> Player().addHP(player)
         }
         player.foodLevel += addfood
     }
@@ -73,8 +73,8 @@ class Food {
     }
     fun eat(player: Player, item: ItemStack) {
         val itemType = item.type
-        if (itemType == Material.MILK_BUCKET && item.itemMeta?.displayName != null) {
-            Food().recovery(player, item)
+        if ((itemType == Material.MILK_BUCKET || itemType == Material.MELON_SLICE) && item.itemMeta?.displayName != null) {
+            recovery(player, item)
         } else {
             player.foodLevel = player.foodLevel + 2
         }

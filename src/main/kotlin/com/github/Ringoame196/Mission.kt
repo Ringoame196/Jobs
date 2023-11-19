@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 class Mission {
     fun set(player: Player, barrel: Barrel) {
-        val r = Random.nextInt(1, 37)
+        val r = Random.nextInt(1, barrel.inventory.size - 1)
         val item = barrel.inventory.getItem(r - 1)
         val name = if (item?.itemMeta?.displayName != "") { item?.itemMeta?.displayName } else { item.type }
         Scoreboard().set("mission", player.name, r)

@@ -110,7 +110,9 @@ class Job {
             Material.DIAMOND_CHESTPLATE,
             Material.DIAMOND_LEGGINGS,
             Material.DIAMOND_BOOTS,
-            Material.SHIELD
+            Material.SHIELD,
+            Material.ARROW,
+            Material.BOW
         )
     }
     fun giveVegetables(location: Location) {

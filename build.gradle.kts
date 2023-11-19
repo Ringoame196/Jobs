@@ -36,6 +36,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     implementation("com.sk89q.worldguard:worldguard-bukkit:7.0.1")
     compileOnly ("com.sk89q.worldguard:worldguard-bukkit:VERSION")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 }
 
 configure<net.minecrell.pluginyml.bukkit.BukkitPluginDescription> {
