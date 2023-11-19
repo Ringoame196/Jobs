@@ -9,7 +9,8 @@ import org.bukkit.entity.Player
 class Player {
     data class PlayerData(
         var maxHP: Int = 0,
-        var power: Int = 0
+        var power: Int = 0,
+        var job: String = "無職"
     )
     fun errorMessage(player: Player, message: String) {
         player.sendMessage("${ChatColor.RED}$message")
@@ -22,8 +23,9 @@ class Player {
     }
 
     fun join(player: Player) {
-        Job().prefix(player)
         val playerData = ConfigData.DataManager.playerDataMap.getOrPut(player.uniqueId) { PlayerData() }
+        Job().setJob(player, Database().getInt(player.uniqueId.toString(), "aoringoserver", "job", "id"))
+        Job().prefix(player)
         playerData.maxHP = Database().getInt(player.uniqueId.toString(), "aoringoserver", "status", "hp")
         playerData.power = Database().getInt(player.uniqueId.toString(), "aoringoserver", "status", "power")
         player.maxHealth = 20.0 + ConfigData.DataManager.playerDataMap.getOrPut(player.uniqueId) { PlayerData() }.maxHP

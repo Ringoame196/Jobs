@@ -15,9 +15,13 @@ import org.bukkit.scheduler.BukkitRunnable
 import kotlin.random.Random
 
 class Job {
-    val job = mutableListOf("無職", "${ChatColor.YELLOW}料理人", "${ChatColor.GOLD}ハンター", "${ChatColor.GRAY}鍛冶屋")
+    private val jobList = mutableListOf("無職", "${ChatColor.YELLOW}料理人", "${ChatColor.GOLD}ハンター", "${ChatColor.GRAY}鍛冶屋")
+    fun setJob(player: Player, id: Int) {
+        ConfigData.DataManager.playerDataMap.getOrPut(player.uniqueId) { com.github.Ringoame196.Player.PlayerData() }.job = jobList[id]
+        Database().setPlayerPoint(player.uniqueId.toString(), "aoringoserver", "job", "id", id)
+    }
     fun get(player: Player): String {
-        return job[Scoreboard().getValue("job", player.uniqueId.toString())]
+        return ConfigData.DataManager.playerDataMap.getOrPut(player.uniqueId) { com.github.Ringoame196.Player.PlayerData() }.job
     }
     fun prefix(player: Player) {
         val displayName = when (get(player)) {
@@ -40,10 +44,10 @@ class Job {
     fun change(player: Player, jobName: String) {
         val item = player.inventory.itemInMainHand
         item.amount = item.amount - 1
-        for (i in 0 until job.size) {
-            if (job[i] != jobName) { continue }
+        for (i in 0 until jobList.size) {
+            if (jobList[i] != jobName) { continue }
             Scoreboard().remove("job", get(player), 1)
-            Scoreboard().set("job", player.uniqueId.toString(), i)
+            setJob(player, i)
             Scoreboard().add("job", get(player), 1)
             prefix(player)
             player.sendMessage("${jobName}に就職しました")
