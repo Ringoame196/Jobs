@@ -253,7 +253,7 @@ class Cook {
         return armorStandsInRange
     }
     fun isCookLevel(itemName: String, player: Player): Boolean {
-        val level = Scoreboard().getValue("cookingLevel", player.uniqueId.toString())
+        val level = Database().getInt(player.uniqueId.toString(), "aoringoserver", "cook", "level")
         val cookLevel = getcookLevel(itemName)
         levelUP(player, itemName)
         return cookLevel <= level
@@ -265,10 +265,10 @@ class Cook {
     }
     fun levelUP(player: Player, itemName: String) {
         if (!itemName.contains("[完成品]")) { return }
-        val cookCount = Database().getInt(player.uniqueId.toString(), "aoringoserver", "cookcount", "count") + 1
-        Database().setPlayerPoint(player.uniqueId.toString(), "aoringoserver", "cookcount", "count", cookCount)
+        val cookCount = Database().getInt(player.uniqueId.toString(), "aoringoserver", "cook", "count") + 1
+        Database().setPlayerPoint(player.uniqueId.toString(), "aoringoserver", "cook", "count", cookCount)
         Database().setPlayerPoint(
-            player.uniqueId.toString(), "aoringoserver", "cooklevel", "level",
+            player.uniqueId.toString(), "aoringoserver", "cook", "level",
             + when (cookCount) {
                 100 -> 1
                 1000 -> 2
