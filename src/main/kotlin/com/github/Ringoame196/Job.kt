@@ -221,7 +221,7 @@ class Job {
     }
     fun titleStar(player: Player) {
         player.setPlayerListName(
-            player.playerListName + when (Database().getInt(player.uniqueId.toString(), "aoringoserver", "cooklevel", "level")) {
+            player.playerListName + when (Database().getInt(player.uniqueId.toString(), "aoringoserver", "cook", "level")) {
                 1 -> "${ChatColor.YELLOW}★"
                 2 -> "${ChatColor.YELLOW}★★"
                 3 -> "${ChatColor.YELLOW}★★★"

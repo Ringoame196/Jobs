@@ -94,7 +94,8 @@ class Cook {
     }
     private fun knife(player: Player): Boolean {
         val knife = player.inventory.itemInMainHand
-        val sharpness = knife.itemMeta?.lore?.get(0).toString().replace("切れ味:", "").toInt()
+        val lore = knife.itemMeta?.lore?.get(0) ?: return false
+        val sharpness = lore.replace("切れ味:", "").toInt()
         if (sharpness > 10) {
             val chance = Random.nextInt(11, 25)
             if (chance <= sharpness) {
